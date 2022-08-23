@@ -1,0 +1,23 @@
+//import '/node_modules/tabulator-tables/dist/css/tabulator_bulma.css'
+import '/node_modules/tabulator-tables/dist/css/tabulator.css'
+import {Tabulator} from 'tabulator-tables'
+
+    var tableData = [
+        {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+        {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+    ]
+
+    var dataTable = new Tabulator("#table", {
+        data:tableData,
+        layout:"fitColumns",
+        columns:[
+            {title:"Name", field:"name"},
+            {title:"Age", field:"age"},
+            {title:"Gender", field:"gender"},
+            {title:"Height", field:"height"},
+            {title:"Favourite Color", field:"col"},
+            {title:"Date Of Birth", field:"dob"},
+            {title:"Cheese Preference", field:"cheese"},
+        ],
+    })
+
