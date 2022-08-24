@@ -14,6 +14,7 @@ class DataTree extends Module{
 		this.collapseEl = null;
 		this.expandEl = null;
 		this.branchEl = null;
+		this.branchEl_lastChild = null;
 		this.elementField = false;
 
 		this.startOpen = function(){};
@@ -56,8 +57,24 @@ class DataTree extends Module{
 			if(options.dataTreeBranchElement){
 
 				if(options.dataTreeBranchElement === true){
+					//this.branchEl = document.createElement("div");
+					//this.branchEl.classList.add("tabulator-data-tree-branch");
+					
+					var top_branchEl = document.createElement("div");
+					top_branchEl.classList.add("tabulator-data-tree-branch-block-top");
+					var bottom_branchEl = document.createElement("div");
+					bottom_branchEl.classList.add("tabulator-data-tree-branch-block-bottom");
 					this.branchEl = document.createElement("div");
-					this.branchEl.classList.add("tabulator-data-tree-branch");
+					this.branchEl.classList.add("tabulator-data-tree-branch-block");
+					this.branchEl.appendChild(top_branchEl);
+					this.branchEl.appendChild(bottom_branchEl);
+					
+					var lastChild_top_branchEl = document.createElement("div");
+					lastChild_top_branchEl.classList.add("tabulator-data-tree-branch-block-top");
+					this.branchEl_lastChild = document.createElement("div");
+					this.branchEl_lastChild.classList.add("tabulator-data-tree-branch-block");
+					this.branchEl_lastChild.appendChild(lastChild_top_branchEl);
+
 				}else{
 					if(typeof options.dataTreeBranchElement === "string"){
 						dummyEl = document.createElement("div");
@@ -78,10 +95,22 @@ class DataTree extends Module{
 					this.collapseEl = options.dataTreeCollapseElement;
 				}
 			}else{
+				//this.collapseEl = document.createElement("div");
+				//this.collapseEl.classList.add("tabulator-data-tree-control");
+				//this.collapseEl.tabIndex = 0;
+				//this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
+				
+				var top_collapseEl = document.createElement("div");
+				top_collapseEl.classList.add("tabulator-data-tree-control");
+				top_collapseEl.tabIndex = 0;
+				top_collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
+				var bottom_collapseEl = document.createElement("div");
+				bottom_collapseEl.classList.add("tabulator-data-tree-control-collapse-block-bottom");
 				this.collapseEl = document.createElement("div");
-				this.collapseEl.classList.add("tabulator-data-tree-control");
-				this.collapseEl.tabIndex = 0;
-				this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
+				this.collapseEl.classList.add("tabulator-data-tree-control-collapse-block");
+				this.collapseEl.appendChild(top_collapseEl);
+				this.collapseEl.appendChild(bottom_collapseEl);
+				
 			}
 
 			if(options.dataTreeExpandElement){
@@ -240,7 +269,12 @@ class DataTree extends Module{
 
 		if(config.index){
 			if(this.branchEl){
+				//console.log(row.modules.dataTree.isLastChild);
+				if (row.modules.dataTree.isLastChild) {
+				config.branchEl = this.branchEl_lastChild.cloneNode(true);
+			        } else {
 				config.branchEl = this.branchEl.cloneNode(true);
+				}
 				el.insertBefore(config.branchEl, el.firstChild);
 
 				if(this.table.rtl){
@@ -371,13 +405,15 @@ class DataTree extends Module{
 
 			childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 			childRow.modules.dataTree.parent = row;
+			childRow.modules.dataTree.isLastChild = false;
 
 			if(childRow.modules.dataTree.children){
 				childRow.modules.dataTree.open = this.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
 			}
 			children.push(childRow);
 		});
-
+                var len = children.length;
+		children[len-1].modules.dataTree.isLastChild = true;
 		return children;
 	}
 

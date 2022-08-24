@@ -35,7 +35,13 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
+// branch line
+$branchLineColor:#808080;
 
+// tag
+$handleWidth:6px !default; //width of the row handle
+$handleColor: #0080FF !default; //color for odd numbered rows
+$handleColorAlt: #99CCFF !default; //color for even numbered rows
 
 //Tabulator Containing Element
 .tabulator{
@@ -622,8 +628,25 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	box-sizing: border-box;
 	min-height:$textSize + ($headerMargin * 2);
 	background-color: $rowBackgroundColor;
-	
-	
+	//tag start
+        .tabulator-cell{
+                &:first-child{
+                        border-left: $handleWidth solid $handleColor;
+                }
+        }
+        &:nth-child(even){
+                background-color: $handleColorAlt;
+
+                .tabulator-cell{
+                        background-color: $rowAltBackgroundColor;
+
+                        &:first-child{
+                                border-left: $handleWidth solid $handleColorAlt;
+                        }
+                }
+
+        }
+	 // end tag
 	&.tabulator-row-even{
 		background-color: $rowAltBackgroundColor;
 	}
@@ -781,6 +804,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 		
 		.tabulator-data-tree-branch{
+		/*
 			display:inline-block;
 			vertical-align:middle;
 			
@@ -794,7 +818,107 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			border-left:2px solid $rowBorderColor;
 			border-bottom:2px solid $rowBorderColor;
+			*/
+
+			display:inline-block;
+			vertical-align:top;
+
+			
+			height:25px;
+			width:10px;
+			
+			margin-top:-15px;
+			margin-right:4px;
+			border-bottom-left-radius:0px;
+			
+			border-left:1px solid $rowBorderColor;
+			border-bottom:1px solid $rowBorderColor;
+			//border-right:1px solid $rowBorderColor;
+			//border-top:1px solid $rowBorderColor;
+			
 		}
+		// collapse
+		.tabulator-data-tree-control-collapse-block{
+			display:inline-flex;
+			flex-direction:column;
+			vertical-align:top;
+			height:100%;
+		}
+		.tabulator-data-tree-control-collapse-block-bottom{
+			display:inline-block;
+			//display:inline;
+			//vertical-align:bottom;
+			vertical-align:top;
+			
+			//height:25px;
+			height:100%;
+			width:10px;
+			
+			margin-bottom:-15px;
+			margin-right:4px;
+			margin-left:5px;
+			border-bottom-left-radius:0px;
+			
+			//border-left:1px solid $rowBorderColor;
+			border-left:1px solid $branchLineColor;
+			//border-bottom:1px solid $rowBorderColor;
+			//border-right:1px solid $rowBorderColor;
+			//border-top:1px solid $rowBorderColor;
+			
+		}
+                // branch
+		.tabulator-data-tree-branch-block{
+			display:inline-flex;
+			flex-direction:column;
+			vertical-align:top;
+			height:100%;
+		}
+
+		.tabulator-data-tree-branch-block-top{
+			display:inline-block;
+			//display:inline;
+			vertical-align:top;
+			
+			height:20px;
+			width:18px;   // |_ size
+			
+			margin-top:-12px;
+			margin-right:4px;
+			margin-left:-4px;
+			border-bottom-left-radius:0px;
+			
+			//border-left:1px solid $rowBorderColor;
+			border-left:1px solid $branchLineColor;
+			//border-bottom:1px solid $rowBorderColor;
+			border-bottom:1px solid $branchLineColor;
+			//border-right:1px solid $rowBorderColor;
+			//border-top:1px solid $rowBorderColor;
+			
+		}
+
+		.tabulator-data-tree-branch-block-bottom{
+			display:inline-block;
+			//display:inline;
+			//vertical-align:bottom;
+			vertical-align:top;
+			
+			//height:25px;
+			height:100%;
+			width:10px;
+			
+			margin-bottom:-15px;
+			margin-right:4px;
+			margin-left:-4px;
+			border-bottom-left-radius:0px;
+			
+			//border-left:1px solid $rowBorderColor;
+			border-left:1px solid $branchLineColor;
+			//border-bottom:1px solid $rowBorderColor;
+			//border-right:1px solid $rowBorderColor;
+			//border-top:1px solid $rowBorderColor;
+			
+		}
+
 		
 		.tabulator-data-tree-control{
 			
