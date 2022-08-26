@@ -2,9 +2,10 @@
 //import '/node_modules/tabulator-tables/dist/css/tabulator.css'
 //import {Tabulator, FormatModule, EditModule, DataTreeModule} from 'tabulator-tables';
 
+import '/tabulator/src/scss/tabulator_gs.scss'
+//import '/tabulator/src/scss/themes/tabulator_modern_gs.scss'
 
 //import '/tabulator/src/scss/tabulator.scss'
-import '/tabulator/src/scss/tabulator_gs.scss'
 //import '/tabulator/src/scss/themes/tabulator_modern.scss'
 //import '/tabulator/src/scss/themes/tabulator_midnight.scss'
 //import '/tabulator/src/scss/themes/materialize/tabulator_materialize.scss'
@@ -12,36 +13,18 @@ import '/tabulator/src/scss/tabulator_gs.scss'
 //import '/tabulator/src/scss/themes/bootstrap/tabulator_bootstrap5.scss'
 
 import {Tabulator, FormatModule, EditModule, DataTreeModule } from '/tabulator/src/js/builds/esm';
-import {ResizeColumnsModule, ResizeRowsModule, MoveRowsModule, FrozenColumnsModule} from '/tabulator/src/js/builds/esm';
+import {ResizeColumnsModule, ResizeRowsModule, SelectRowModule, MoveRowsModule, MoveColumnsModule, FrozenColumnsModule} from '/tabulator/src/js/builds/esm';
 
 Tabulator.registerModule([FormatModule, 
 	EditModule, 
 	DataTreeModule, 
 	ResizeColumnsModule, 
 	ResizeRowsModule, 
+	SelectRowModule,
 	MoveRowsModule, 
+	MoveColumnsModule,
 	FrozenColumnsModule]);
 
-/*
-    var tableData = [
-        {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
-        {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
-    ]
-
-    var dataTable = new Tabulator("#table", {
-        data:tableData,
-        layout:"fitColumns",
-        columns:[
-            {title:"Name", field:"name"},
-            {title:"Age", field:"age"},
-            {title:"Gender", field:"gender"},
-            {title:"Height", field:"height"},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob"},
-            {title:"Cheese Preference", field:"cheese"},
-        ],
-    })
-*/
 
 var tableDataNested = [
     {name:"Oli Bob", location:"United Kingdom", gender:"male", col:"red", dob:"14/04/1984", _children:[
@@ -57,9 +40,22 @@ var tableDataNested = [
         {name:"Emily Sykes", location:"South Korea", gender:"female", col:"maroon", dob:"11/11/1970"},
     ]},
     {name:"James Newman", location:"Japan", gender:"male", col:"red", dob:"22/03/1998"},
+    {name:"Oli Bob", location:"United Kingdom", gender:"male", col:"red", dob:"14/04/1984", _children:[
+        {name:"Mary May", location:"Germany", gender:"female", col:"blue", dob:"14/05/1982"},
+        {name:"Christine Lobowski", location:"France", gender:"female", col:"green", dob:"22/05/1982"},
+        {name:"Brendon Philips", location:"USA", gender:"male", col:"orange", dob:"01/08/1980", _children:[
+            {name:"Margret Marmajuke", location:"Canada", gender:"female", col:"yellow", dob:"31/01/1999"},
+            {name:"Frank Harbours", location:"Russia", gender:"male", col:"red", dob:"12/05/1966"},
+        ]},
+    ]},
+    {name:"Jamie Newhart", location:"India", gender:"male", col:"green", dob:"14/05/1985"},
+    {name:"Gemma Jane", location:"China", gender:"female", col:"red", dob:"22/05/1982", _children:[
+        {name:"Emily Sykes", location:"South Korea", gender:"female", col:"maroon", dob:"11/11/1970"},
+    ]},
+    {name:"James Newman", location:"Japan", gender:"male", col:"red", dob:"22/03/1998"},
 ];
 
-var dateEditor = function(cell, onRendered, success, cancel, editorParams){
+var dataEditor = function(cell, onRendered, success, cancel, editorParams){
     //cell - the cell component for the editable cell
     //onRendered - function to call when the editor has been rendered
     //success - function to call to pass thesuccessfully updated value to Tabulator
@@ -96,7 +92,53 @@ var dateEditor = function(cell, onRendered, success, cancel, editorParams){
     
     function keydown_event(e) {
            console.log("key down:" + e.key);
+           if( e.ctrlKey  === false ){
+               if( e.shiftKey  === false ){
+                      if (e.key == 'ArrowDown' || e.key == 'Enter') {
+                        table.navigateDown();
+               	       e.preventDefault();
+                              e.stopPropagation();
+                      } else if (e.key == 'ArrowUp') {
+                        table.navigateUp();
+               	       e.preventDefault();
+                              e.stopPropagation();
+                      } else if (e.key == 'ArrowLeft') {
+                           //if( e.shiftKey || e.ctrlKey ) {
+                              table.navigateLeft();
+               	       e.preventDefault();
+                              e.stopPropagation();
+                      } else if (e.key == 'ArrowRight') {
+                           //if( e.shiftKey || e.ctrlKey ) {
+                              table.navigateRight();
+               	       e.preventDefault();
+                              e.stopPropagation();
+                      }
+               } else {
+
+               }
+           } else {  // e.ctrlKey == true
+		      const position = editor.selectionStart;
+		      //console.log(position);
+                      if (e.key == 'ArrowDown' ) {
+               	              e.preventDefault();
+                              e.stopPropagation();
+                      } else if (e.key == 'ArrowUp') {
+               	              e.preventDefault();
+                              e.stopPropagation();
+                      } else if (e.key == 'ArrowLeft') {
+               	              e.preventDefault();
+                              e.stopPropagation();
+			      const p = position -1;
+			      editor.setSelectionRange(p,p);
+                      } else if (e.key == 'ArrowRight') {
+               	              e.preventDefault();
+                              e.stopPropagation();
+			      const p = position +1;
+			      editor.setSelectionRange(p,p);
+                      }
+          }       
     }
+
     function keyup_event(e) {
            console.log(e.key);
     }
@@ -106,7 +148,7 @@ var dateEditor = function(cell, onRendered, success, cancel, editorParams){
     editor.addEventListener("input", inputFunc);
     //editor.addEventListener("beforeinput", inputFunc);
     //editor.addEventListener('keypress', keypress_event);
-    //editor.addEventListener('keydown', keydown_event);
+    editor.addEventListener('keydown', keydown_event);
     //editor.addEventListener('keyup', keyup_event);
 
 
@@ -116,17 +158,23 @@ var dateEditor = function(cell, onRendered, success, cancel, editorParams){
 
 
 var table = new Tabulator("#example-table", {
-    height:"311px",
+    height:"511px",
+    //height:"100%",
     //width:"511px",
+    //width:"100%",
+    rowHeight:30, 
     data:tableDataNested,
     dataTree:true,
     dataTreeStartExpanded:true,
     resizableRows:true, 
-    movableRows:true,
+//	selectable:true,
+    //movableRows:true,
+     movableColumns: true, 
     columns:[
 /*
    {rowHandle:true, formatter:"handle", headerSort:false, frozen:true, width:60, minWidth:60},
 */
+/*
     {title:"Name", field:"name", width:200, responsive:0, frozen:true, resizable:true, editor:"input"}, //never hide this column
     {title:"Location", field:"location", width:150, resizable:true, editor:"input"},
     {title:"Gender", field:"gender", width:150, responsive:2, resizable:true, editor:"input"}, //hide this column first
@@ -138,26 +186,73 @@ var table = new Tabulator("#example-table", {
     {title:"Favourite Color", field:"col", width:150, resizable:true, editor:"input"   },
     {title:"Favourite Color", field:"col", width:150, resizable:true, editor:"input"   },
     {title:"Date Of Birth", field:"dob", hozAlign:"center", sorter:"date", width:150, resizable:true, editor:"input"},
+	    */
+    {title:"Name", field:"name", width:200, responsive:0, frozen:true, resizable:true, editor:'input'}, //never hide this column
+    //{title:"Name", field:"name", width:200, responsive:0, frozen:true, resizable:true, }, //never hide this column
+    {title:"Location", field:"location", width:150, resizable:true, editor:dataEditor},
+    {title:"Gender", field:"gender", width:150, responsive:2, resizable:true, editor:dataEditor}, //hide this column first
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Favourite Color", field:"col", width:150, resizable:true, editor:dataEditor   },
+    {title:"Date Of Birth", field:"dob", hozAlign:"center", sorter:"date", width:150, resizable:true, editor:dataEditor},
     ],
 });
 
+window.addEventListener('resize', function(){
+    table.redraw(true); //trigger full rerender including all data and rows
+});
 
-document.addEventListener('keydown', keydown_event);
+//document.addEventListener('keydown', keydown_event);
 
 function keydown_event(e) {
    console.log("document key down:" + e.key);
     if( e.ctrlKey  === false ){
-	if (e.key == 'ArrowDown' || e.key == 'Enter') {
-	  table.navigateDown();
-	} else if (e.key == 'ArrowUp') {
-	  table.navigateUp();
-	} else if (e.key == 'ArrowLeft') {
-	  table.navigateLeft();
-	} else if (e.key == 'ArrowRight') {
-	  table.navigateRight();
+        if( e.shiftKey  === false ){
+               if (e.key == 'ArrowDown' || e.key == 'Enter') {
+                 table.navigateDown();
+		       e.preventDefault();
+                       e.stopPropagation();
+               } else if (e.key == 'ArrowUp') {
+                 table.navigateUp();
+		       e.preventDefault();
+                       e.stopPropagation();
+               } else if (e.key == 'ArrowLeft') {
+                    //if( e.shiftKey || e.ctrlKey ) {
+                       table.navigateLeft();
+		       e.preventDefault();
+                       e.stopPropagation();
+		    //}
+               } else if (e.key == 'ArrowRight') {
+                    //if( e.shiftKey || e.ctrlKey ) {
+                       table.navigateRight();
+		       e.preventDefault();
+                       e.stopPropagation();
+		    //}
+               }
+	} else {
+
 	}
-   }else{
-   }
+    } else {  // e.ctrlKey == true
+               if (e.key == 'ArrowDown' ) {
+		       e.preventDefault();
+                       e.stopPropagation();
+               } else if (e.key == 'ArrowUp') {
+		       e.preventDefault();
+                       e.stopPropagation();
+               } else if (e.key == 'ArrowLeft') {
+		       e.preventDefault();
+                       e.stopPropagation();
+               } else if (e.key == 'ArrowRight') {
+		       e.preventDefault();
+                       e.stopPropagation();
+               }
+
+
+    }
 }
 
 
